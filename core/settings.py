@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'users_app',
     'boards_app',
+    'tasks_app'
     
 ]
 
