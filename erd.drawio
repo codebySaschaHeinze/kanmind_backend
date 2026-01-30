@@ -1,26 +1,26 @@
 <mxfile host="65bd71144e">
     <diagram id="806oc53xbm90GNYJxux3" name="Page-1">
-        <mxGraphModel dx="1802" dy="912" grid="0" gridSize="5" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" background="#B3B3B3" math="0" shadow="0">
+        <mxGraphModel dx="1616" dy="964" grid="0" gridSize="5" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" background="#B3B3B3" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
                 <mxCell id="13" value="&lt;b style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;&lt;font style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); font-size: 24px;&quot;&gt;COMMENT&lt;/font&gt;&lt;/b&gt;&lt;div style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;&lt;b style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;&lt;font style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); font-size: 18px;&quot;&gt;&lt;br style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;&lt;/font&gt;&lt;/b&gt;&lt;/div&gt;&lt;div style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); text-align: left;&quot;&gt;&lt;font size=&quot;3&quot; style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;&lt;b&gt;PK: &lt;/b&gt;id&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); text-align: left;&quot;&gt;&lt;font size=&quot;3&quot; style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;&lt;b&gt;FK:&lt;/b&gt; task_id -&amp;gt; TASK.id&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); text-align: left;&quot;&gt;&lt;font size=&quot;3&quot; style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;&lt;b&gt;FK:&lt;/b&gt; author_id -&amp;gt; USER.id&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); text-align: left;&quot;&gt;&lt;font size=&quot;3&quot; style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;content&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); text-align: left;&quot;&gt;&lt;font size=&quot;3&quot; style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;created_at&lt;/font&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontColor=light-dark(#FFFFFF,#EDEDED);" parent="1" vertex="1">
                     <mxGeometry x="425" y="320" width="300" height="190" as="geometry"/>
                 </mxCell>
-                <mxCell id="43" style="edgeStyle=none;html=1;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;endArrow=ERzeroToMany;endFill=0;strokeWidth=2;endSize=13;startSize=13;startArrow=ERone;startFill=0;strokeColor=#000000;fontColor=light-dark(#FFFFFF,#EDEDED);" parent="1" source="14" target="13" edge="1">
+                <mxCell id="43" style="edgeStyle=none;html=1;exitX=-0.001;exitY=0.339;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;endArrow=ERzeroToMany;endFill=0;strokeWidth=2;endSize=13;startSize=13;startArrow=ERone;startFill=0;strokeColor=#000000;fontColor=light-dark(#FFFFFF,#EDEDED);exitPerimeter=0;" parent="1" source="14" target="13" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="575" y="595"/>
+                            <mxPoint x="575" y="622"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="14" value="&lt;b style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;&lt;font style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); font-size: 24px;&quot;&gt;TASK&lt;/font&gt;&lt;/b&gt;&lt;div style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;&lt;b style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;&lt;font size=&quot;3&quot; style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;&lt;br style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;&lt;/font&gt;&lt;/b&gt;&lt;/div&gt;&lt;div style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); text-align: left;&quot;&gt;&lt;font size=&quot;3&quot; style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;&lt;b&gt;PK:&lt;/b&gt; id&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); text-align: left;&quot;&gt;&lt;font size=&quot;3&quot; style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;&lt;b&gt;FK: &lt;/b&gt;board_id -&amp;gt; BOARD.id&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); text-align: left;&quot;&gt;&lt;font size=&quot;3&quot; style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;title&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); text-align: left;&quot;&gt;&lt;font size=&quot;3&quot; style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;description&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); text-align: left;&quot;&gt;&lt;font size=&quot;3&quot; style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;status (to-do | in-progress | review | done)&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); text-align: left;&quot;&gt;&lt;font size=&quot;3&quot; style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;priority (low | medium | high)&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); text-align: left;&quot;&gt;&lt;font size=&quot;3&quot; style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;&lt;b&gt;FK nullable:&lt;/b&gt; assignee_id -&amp;gt; USER.id&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); text-align: left;&quot;&gt;&lt;font size=&quot;3&quot; style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;&lt;b&gt;FK&amp;nbsp;&lt;/b&gt;&lt;/font&gt;&lt;b style=&quot;background-color: transparent; scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); font-size: medium;&quot;&gt;nullable&lt;/b&gt;&lt;b style=&quot;font-size: medium; background-color: transparent;&quot;&gt;: &lt;/b&gt;&lt;span style=&quot;font-size: medium; background-color: transparent;&quot;&gt;reviewer_id -&amp;gt; USER.id&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); text-align: left;&quot;&gt;&lt;font size=&quot;3&quot; style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;due_date&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); text-align: left;&quot;&gt;&lt;font size=&quot;3&quot; style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;&lt;b&gt;FK: &lt;/b&gt;USER.id&lt;/font&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontColor=light-dark(#FFFFFF,#EDEDED);" parent="1" vertex="1">
                     <mxGeometry x="740" y="520" width="340" height="300" as="geometry"/>
                 </mxCell>
-                <mxCell id="42" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=ERzeroToMany;endFill=0;startArrow=ERone;startFill=0;endSize=13;startSize=13;targetPerimeterSpacing=0;sourcePerimeterSpacing=0;strokeWidth=2;strokeColor=#000000;fontColor=light-dark(#FFFFFF,#EDEDED);" parent="1" source="15" target="14" edge="1">
+                <mxCell id="42" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=-0.004;entryY=0.646;entryDx=0;entryDy=0;endArrow=ERzeroToMany;endFill=0;startArrow=ERone;startFill=0;endSize=13;startSize=13;targetPerimeterSpacing=0;sourcePerimeterSpacing=0;strokeWidth=2;strokeColor=#000000;fontColor=light-dark(#FFFFFF,#EDEDED);entryPerimeter=0;" parent="1" source="15" target="14" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="205" y="670"/>
+                            <mxPoint x="205" y="714"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
@@ -47,10 +47,10 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="41" style="edgeStyle=none;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;endArrow=ERzeroToMany;endFill=0;strokeWidth=2;endSize=13;startSize=13;startArrow=ERone;startFill=0;strokeColor=#000000;fontColor=light-dark(#FFFFFF,#EDEDED);" parent="1" source="17" target="13" edge="1">
+                <mxCell id="41" style="edgeStyle=none;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=ERzeroToMany;endFill=0;strokeWidth=2;endSize=13;startSize=13;startArrow=ERone;startFill=0;strokeColor=#000000;fontColor=light-dark(#FFFFFF,#EDEDED);" parent="1" source="17" target="13" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="650" y="168"/>
+                            <mxPoint x="573" y="168"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
@@ -66,7 +66,7 @@
                     <mxGeometry x="400" y="210" width="50" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="24" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;1:N&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=light-dark(#FFFFFF,#EDEDED);textShadow=0;labelBorderColor=none;" parent="1" vertex="1">
-                    <mxGeometry x="660" y="170" width="50" height="40" as="geometry"/>
+                    <mxGeometry x="575" y="170" width="50" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="30" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;1:N&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=light-dark(#FFFFFF,#EDEDED);textShadow=0;labelBorderColor=none;" parent="1" vertex="1">
                     <mxGeometry x="460" y="635" width="50" height="40" as="geometry"/>
@@ -107,7 +107,7 @@
                     <mxGeometry x="385" y="235" width="80" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="53" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b style=&quot;&quot;&gt;(Author&lt;/b&gt;&lt;/font&gt;&lt;b style=&quot;background-color: transparent; font-size: 14px;&quot;&gt;)&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=light-dark(#FFFFFF,#EDEDED);textShadow=0;labelBorderColor=none;" parent="1" vertex="1">
-                    <mxGeometry x="645" y="195" width="80" height="30" as="geometry"/>
+                    <mxGeometry x="570" y="195" width="80" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="54" value="&lt;b style=&quot;scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); font-size: 14px;&quot;&gt;&lt;font style=&quot;color: rgb(0, 0, 0);&quot;&gt;(Assignee)&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="845" y="363" width="95" height="35" as="geometry"/>
