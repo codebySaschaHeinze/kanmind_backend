@@ -5,29 +5,29 @@ Provides token-based authentication, boards, tasks, and task comments.
 
 ## Tech Stack
 
-Python
+- Python
 
-Django
+- Django
 
-Django REST Framework (DRF)
+- Django REST Framework (DRF)
 
-DRF Token Authentication
+- DRF Token Authentication
 
-django-cors-headers
+- django-cors-headers
 
-SQLite (dev)
+- SQLite (dev)
 
 ## Key Concepts
 
-Authentication via Authorization: Token <token>
+- Authentication via Authorization: Token <token>
 
-Users log in with email (no username) and have a fullname
+- Users log in with email (no username) and have a fullname
 
-Board access/editing is controlled by board membership:
+- Board access/editing is controlled by board membership:
 
-If you are a member of a board, you can read/edit its tasks and comments.
+- If you are a member of a board, you can read/edit its tasks and comments.
 
-API Base URL
+## API Base URL
 
 http://127.0.0.1:8000/api/
 
@@ -165,19 +165,19 @@ Auth required (board member)
 
 Response: 204 No Content
 
-Data Model (Relations)
+## Data Model (Relations)
 
-User creates many Boards (1:n)
+- User creates many Boards (1:n)
 
-Users are members of many Boards (m:n)
+- Users are members of many Boards (m:n)
 
-Board has many Tasks (1:n)
+- Board has many Tasks (1:n)
 
-Task optionally has one assigned user and one reviewer (0..1:n)
+- Task optionally has one assigned user and one reviewer (0..1:n)
 
-Task has many Comments (1:n)
+- Task has many Comments (1:n)
 
-User writes many Comments (1:n)
+- User writes many Comments (1:n)
 
 ![ERD](docs/erd.png)
 
@@ -278,10 +278,13 @@ pip freeze > requirements.txt
 
 ### 3) Environment variables
 
-Create a .env file (use env.template as reference) and provide at least:
+Create a .env file (use .env.template as reference)
+
+The project loads .env via python-dotenv in core/settings.py
 
 DJANGO_SECRET_KEY=your-secret-key
-Optional:
+
+##### Optional:
 
 DEBUG=1
 
