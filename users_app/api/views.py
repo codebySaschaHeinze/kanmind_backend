@@ -32,7 +32,7 @@ class RegistrationView(APIView):
     
 
 class LoginView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
@@ -52,7 +52,7 @@ class LoginView(APIView):
         )
     
 
-class EmailCheckView():
+class EmailCheckView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
