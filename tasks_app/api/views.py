@@ -15,7 +15,7 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Task.objects.filter(board__member=user).distinct()
+        return Task.objects.filter(board__members=user).distinct()
     
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -43,18 +43,18 @@ class TaskViewSet(viewsets.ModelViewSet):
         return super().create(request, *args, **kwargs)
     
     
-@action(detail=False, methods=["get"], url_path="assigned-to-me")
-def assigned_to_me(self, request):
-    queryset = self.get_queryset().filter(assigned_to=request.user)
-    serializer = self.get_serializer(queryset, many=True)
-    return Response(serializer.data)
+    @action(detail=False, methods=["get"], url_path="assigned-to-me")
+    def assigned_to_me(self, request):
+        queryset = self.get_queryset().filter(assigned_to=request.user)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
-@action(detail=False, methods=["get"], url_path="reviewing")
-def reviewing(self, request):
-    queryset = self.get_queryset().filter(reviewer=request.user)
-    serializer = self.get_serializer(queryset, many=True)
-    return Response(serializer.data)
+    @action(detail=False, methods=["get"], url_path="reviewing")
+    def reviewing(self, request):
+        queryset = self.get_queryset().filter(reviewer=request.user)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -83,7 +83,8 @@ class CommentViewSet(viewsets.ModelViewSet):
         
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        comment = Comment.object.create(
+
+        comment = Comment.objects.create(
             task=task,
             author=user,
             text=serializer.validated_data["text"],

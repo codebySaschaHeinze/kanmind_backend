@@ -4,7 +4,7 @@ from tasks_app.models import Task, Comment
 class TaskSerializer(serializers.ModelSerializer):
     
     class Meta:
-        Model = Task
+        model = Task
         fields = [
             "id",
             "board",
@@ -25,7 +25,7 @@ class TaskSerializer(serializers.ModelSerializer):
         
     def create(self, validated_data):
         request = self.context["request"]
-        return Task.objects.create(create_by=request.user, **validated_data)
+        return Task.objects.create(created_by=request.user, **validated_data)
     
 
 class CommentSerializer(serializers.ModelSerializer):
