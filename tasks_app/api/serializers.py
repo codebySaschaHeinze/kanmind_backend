@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from tasks_app.models import Task
+from tasks_app.models import Task, Comment
 
 class TaskSerializer(serializers.ModelSerializer):
     
@@ -28,3 +28,19 @@ class TaskSerializer(serializers.ModelSerializer):
         return Task.objects.create(create_by=request.user, **validated_data)
     
 
+class CommentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Comment
+        fields = [
+            "id", 
+            "task", 
+            "author", 
+            "text", 
+            "created_at"]
+        read_only_fields = [
+            "id", 
+            "task", 
+            "author", 
+            "created_at"]
+        
