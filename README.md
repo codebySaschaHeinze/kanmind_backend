@@ -37,133 +37,133 @@ http://127.0.0.1:8000/api/
 
 #### POST /api/registration/
 
-Request: fullname, email, password, repeated_password
+- Request: fullname, email, password, repeated_password
 
-Response: token, user_id, email, fullname
+- Response: token, user_id, email, fullname
 
 #### POST /api/login/
 
-Request: email, password
+- Request: email, password
 
-Response: token, user_id, email, fullname
+- Response: token, user_id, email, fullname
 
 ### Users
 
 #### GET /api/email-check/?email=<email>
 
-Auth required
+- Auth required
 
-Response (200): id, email, fullname
+- Response (200): id, email, fullname
 
-Response (404): user not found
+- Response (404): user not found
 
 ### Boards
 
 #### GET /api/boards/
 
-Auth required
+- Auth required
 
-Returns boards where the current user is a member
+- Returns boards where the current user is a member
 
 #### POST /api/boards/
 
-Auth required
+- Auth required
 
-Request: title (optional: members as list of user IDs)
+- Request: title (optional: members as list of user IDs)
 
 ##### Notes:
 
-created_by is set automatically to the current user
+- created_by is set automatically to the current user
 
-creator is automatically added to members
+- creator is automatically added to members
 
 #### GET /api/boards/<board_id>/
 
-Auth required (board member or creator)
+- Auth required (board member or creator)
 
 #### PATCH /api/boards/<board_id>/
 
-Auth required (board member or creator)
+- Auth required (board member or creator)
 
-Can update title and/or set members (list of user IDs)
+- Can update title and/or set members (list of user IDs)
 
 #### DELETE /api/boards/<board_id>/
 
-Auth required (board member or creator)
+- Auth required (board member or creator)
 
 ### Tasks
 
 #### GET /api/tasks/
 
-Auth required
+- Auth required
 
-Returns tasks from boards where the current user is a member
+- Returns tasks from boards where the current user is a member
 
 #### POST /api/tasks/
 
-Auth required
+- Auth required
 
-Minimum request: board (board ID), title
+- Minimum request: board (board ID), title
 
-Optional: description, status, assigned_to, reviewer
+- Optional: description, status, assigned_to, reviewer
 
 ##### Notes:
 
-created_by is set automatically to the current user
+- created_by is set automatically to the current user
 
-Only board members can create tasks on that board
+- Only board members can create tasks on that board
 
 #### PATCH /api/tasks/<task_id>/
 
-Auth required (board member)
+- Auth required (board member)
 
-Example fields: status, assigned_to, reviewer, title, description
+- Example fields: status, assigned_to, reviewer, title, description
 
 #### DELETE /api/tasks/<task_id>/
 
-Auth required (board member)
+- Auth required (board member)
 
 #### GET /api/tasks/assigned-to-me/
 
-Auth required
+- Auth required
 
-Returns tasks where assigned_to == current user
+- Returns tasks where assigned_to == current user
 
-Response is always a list (array)
+- Response is always a list (array)
 
 #### GET /api/tasks/reviewing/
 
-Auth required
+- Auth required
 
-Returns tasks where reviewer == current user
+- Returns tasks where reviewer == current user
 
-Response is always a list (array)
+- Response is always a list (array)
 
 ### Comments
 
 #### GET /api/tasks/<task_id>/comments/
 
-Auth required (board member)
+- Auth required (board member)
 
-Returns a list of comments for that task
+- Returns a list of comments for that task
 
 #### POST /api/tasks/<task_id>/comments/
 
-Auth required (board member)
+- Auth required (board member)
 
-Request: text
+- Request: text
 
 ##### Notes:
 
-author is set automatically to the current user
+- author is set automatically to the current user
 
-task is taken from the URL
+- task is taken from the URL
 
 #### DELETE /api/tasks/<task_id>/comments/<comment_id>/
 
-Auth required (board member)
+- Auth required (board member)
 
-Response: 204 No Content
+- Response: 204 No Content
 
 ## Data Model (Relations)
 
