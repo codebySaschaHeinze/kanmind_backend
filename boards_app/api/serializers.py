@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from boards_app.models import Board
+from .validators import validate_not_empty
 
 User = get_user_model()
 
@@ -21,12 +22,12 @@ class BoardSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         members = validated_data.pop("members", [])
         request = self.context["request"]
-
         board = Board.objects.create(created_by=request.user, **validated_data)
-
         board.members.add(request.user)
-
         for user in members:
             board.members.add(user)
-
         return board
+    
+    
+    def validate_title(self, value):
+        return validate_not_empty(value, "title")
