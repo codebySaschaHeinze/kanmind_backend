@@ -177,7 +177,6 @@ kanmind_backend/
 │  │  ├─ __init__.py
 │  │  ├─ views.py
 │  │  └─ urls.py
-│  │
 │  ├─ models.py
 │  ├─ admin.py
 │  └─ apps.py
