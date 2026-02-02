@@ -192,13 +192,26 @@ kanmind_backend/
 │  ├─ asgi.py
 │  └─ wsgi.py
 │
-├─ users_app/                     Custom user model + auth endpoints
+├─ auth_app/                      Authentication endpoints (login, registration)
 │  ├─ migrations/
 │  ├─ api/
 │  │  ├─ __init__.py
 │  │  ├─ serializers.py
 │  │  ├─ views.py
 │  │  ├─ urls.py
+│  │  ├─ permissions.py
+│  │  └─ validators.py            Validation helpers (API-level)
+│  ├─ admin.py
+│  ├─ apps.py
+│  └─ models.py
+│
+├─ users_app/                     Custom user model + user lookup endpoint
+│  ├─ migrations/
+│  ├─ api/
+│  │  ├─ __init__.py
+│  │  ├─ views.py
+│  │  ├─ urls.py
+│  │  ├─ permissions.py
 │  │  └─ validators.py            Validation helpers (API-level)
 │  ├─ models.py
 │  ├─ admin.py
