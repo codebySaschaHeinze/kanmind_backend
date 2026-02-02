@@ -244,6 +244,7 @@ kanmind_backend/
 │  └─ apps.py
 │
 ├─ docs/                          Documentation assets
+│  ├─ erd.drawio                  ERD diagram (drawio)
 │  └─ erd.png                     ERD diagram (PNG)
 │
 ├─ manage.py
