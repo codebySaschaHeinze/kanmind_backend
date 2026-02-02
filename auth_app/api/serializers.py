@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework import serializers
-
+from .validators import validate_unique_email, validate_passwords_match, validate_login
 
 User = get_user_model()
 
@@ -12,13 +12,10 @@ class RegistrationSerializer(serializers.Serializer):
     repeated_password = serializers.CharField(write_only=True, min_length=6)
 
     def validate_email(self, value):
-        if User.objects.filter(email=value).exists():
-            raise serializers.ValidationError("Diese Email existiert bereits.")
-        return value
+        return validate_unique_email(value)
     
     def validate(self, attrs):
-        if attrs["password"] != attrs["repeated_password"]:
-            raise serializers.ValidationError({"repeated_password": "Passwörter stimmen nicht überein."})
+        validate_passwords_match(attrs["password"], attrs["repeated_password"])
         return attrs
     
     def create(self, validated_data):
@@ -35,12 +32,6 @@ class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
 
-    def validate(self, attrs):
-        user = authenticate(email=attrs["email"], password=attrs["password"])
-        if not user:
-            raise serializers.ValidationError("Ungültige Anmeldeinformationen.")
-        if not user.is_active:
-            raise serializers.ValidationError("Benutzer ist nicht aktiv.")
-        attrs["user"] = user
-        return attrs
-    
+    def validate_login(self, attrs):
+        attrs["user"] = validate_login(attrs["email"], attrs["password"])
+        return attrs     
