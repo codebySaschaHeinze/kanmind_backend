@@ -6,25 +6,17 @@ Provides token-based authentication, boards, tasks, and task comments.
 ## Tech Stack
 
 - Python
-
 - Django
-
 - Django REST Framework (DRF)
-
 - DRF Token Authentication
-
 - django-cors-headers
-
 - SQLite (dev)
 
 ## Key Concepts
 
 - Authentication via Authorization: Token <token>
-
 - Users log in with email (no username) and have a fullname
-
 - Board access/editing is controlled by board membership:
-
 - If you are a member of a board, you can read/edit its tasks and comments.
 
 ## API Base URL
@@ -38,13 +30,11 @@ http://127.0.0.1:8000/api/
 #### POST /api/registration/
 
 - Request: fullname, email, password, repeated_password
-
 - Response: token, user_id, email, fullname
 
 #### POST /api/login/
 
 - Request: email, password
-
 - Response: token, user_id, email, fullname
 
 ### Users
@@ -52,9 +42,7 @@ http://127.0.0.1:8000/api/
 #### GET /api/email-check/?email=<email>
 
 - Auth required
-
 - Response (200): id, email, fullname
-
 - Response (404): user not found
 
 ### Boards
@@ -62,19 +50,16 @@ http://127.0.0.1:8000/api/
 #### GET /api/boards/
 
 - Auth required
-
 - Returns boards where the current user is a member
 
 #### POST /api/boards/
 
 - Auth required
-
 - Request: title (optional: members as list of user IDs)
 
 ##### Notes:
 
 - created_by is set automatically to the current user
-
 - creator is automatically added to members
 
 #### GET /api/boards/<board_id>/
@@ -84,7 +69,6 @@ http://127.0.0.1:8000/api/
 #### PATCH /api/boards/<board_id>/
 
 - Auth required (board member or creator)
-
 - Can update title and/or set members (list of user IDs)
 
 #### DELETE /api/boards/<board_id>/
@@ -96,27 +80,22 @@ http://127.0.0.1:8000/api/
 #### GET /api/tasks/
 
 - Auth required
-
 - Returns tasks from boards where the current user is a member
 
 #### POST /api/tasks/
 
 - Auth required
-
 - Minimum request: board (board ID), title
-
 - Optional: description, status, assigned_to, reviewer
 
 ##### Notes:
 
 - created_by is set automatically to the current user
-
 - Only board members can create tasks on that board
 
 #### PATCH /api/tasks/<task_id>/
 
 - Auth required (board member)
-
 - Example fields: status, assigned_to, reviewer, title, description
 
 #### DELETE /api/tasks/<task_id>/
@@ -126,17 +105,13 @@ http://127.0.0.1:8000/api/
 #### GET /api/tasks/assigned-to-me/
 
 - Auth required
-
 - Returns tasks where assigned_to == current user
-
 - Response is always a list (array)
 
 #### GET /api/tasks/reviewing/
 
 - Auth required
-
 - Returns tasks where reviewer == current user
-
 - Response is always a list (array)
 
 ### Comments
@@ -144,39 +119,30 @@ http://127.0.0.1:8000/api/
 #### GET /api/tasks/<task_id>/comments/
 
 - Auth required (board member)
-
 - Returns a list of comments for that task
 
 #### POST /api/tasks/<task_id>/comments/
 
 - Auth required (board member)
-
 - Request: text
 
 ##### Notes:
 
 - author is set automatically to the current user
-
 - task is taken from the URL
 
 #### DELETE /api/tasks/<task_id>/comments/<comment_id>/
 
 - Auth required (board member)
-
 - Response: 204 No Content
 
 ## Data Model (Relations)
 
 - User creates many Boards (1:n)
-
 - Users are members of many Boards (m:n)
-
 - Board has many Tasks (1:n)
-
 - Task optionally has one assigned user and one reviewer (0..1:n)
-
 - Task has many Comments (1:n)
-
 - User writes many Comments (1:n)
 
 ![ERD](docs/erd.png)
@@ -210,9 +176,8 @@ kanmind_backend/
 │  ├─ api/
 │  │  ├─ __init__.py
 │  │  ├─ views.py
-│  │  ├─ urls.py
-│  │  ├─ permissions.py
-│  │  └─ validators.py            Validation helpers (API-level)
+│  │  └─ urls.py
+│  │
 │  ├─ models.py
 │  ├─ admin.py
 │  └─ apps.py
@@ -310,13 +275,7 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
-### 5) Create admin user (optional)
-
-```text
-python manage.py createsuperuser
-```
-
-### 6) Start server
+### 5) Start server
 
 ```text
 python manage.py runserver

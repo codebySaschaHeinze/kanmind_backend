@@ -1,8 +1,11 @@
 from rest_framework import serializers
-from tasks_app.models import Task, Comment
+
+from tasks_app.models import Comment, Task
 from .validators import validate_not_empty, validate_user_is_board_member
 
+
 class TaskSerializer(serializers.ModelSerializer):
+    """Serialize tasks and validate task input."""
     
     class Meta:
         model = Task
@@ -16,23 +19,19 @@ class TaskSerializer(serializers.ModelSerializer):
             "reviewer",
             "created_by",
             "created_at",
-            "updated_at",
+            "updated_at"
         ]
         read_only_fields = [
             "id", 
             "created_by", 
             "created_at", 
-            "updated_at"]
+            "updated_at"
+        ]
         
-    def create(self, validated_data):
-        request = self.context["request"]
-        return Task.objects.create(created_by=request.user, **validated_data)
-    
-
     def validate_title(self, value):
+        """Ensure title is not blank."""
         return validate_not_empty(value, "title")
     
-
     def validate(self, attrs):
         board = attrs.get("board") or getattr(self.instance, "board", None)
 
@@ -47,6 +46,7 @@ class TaskSerializer(serializers.ModelSerializer):
     
 
 class CommentSerializer(serializers.ModelSerializer):
+    """Serialize comments and validate comment input."""
 
     class Meta:
         model = Comment
@@ -63,4 +63,5 @@ class CommentSerializer(serializers.ModelSerializer):
             "created_at"]
         
     def validate_text(self, value):
+        """Ensure comment is not blank."""
         return validate_not_empty(value, "text")

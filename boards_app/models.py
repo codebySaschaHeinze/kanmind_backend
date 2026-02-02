@@ -1,9 +1,10 @@
 from django.conf import settings
 from django.db import models
 
-# Create your models here.
 
 class Board(models.Model):
+    """A Kanban board with members and a creator."""
+    
     title = models.CharField(max_length=255)
 
     created_by = models.ForeignKey(
@@ -19,6 +20,9 @@ class Board(models.Model):
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
 
     def __str__(self):
         return self.title
