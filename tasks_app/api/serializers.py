@@ -1,14 +1,22 @@
+"""
+tasks_app API serializers.
+
+- TaskReadSerializer: output for GET (list/retrieve)
+- TaskWriteSerializer: input for POST/PATCH (create/update)
+"""
+
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from tasks_app.models import Comment, Task
 from .validators import validate_not_empty, validate_user_is_board_member
 
-
 User = get_user_model()
 
 
 class UserMiniSerializer(serializers.ModelSerializer):
+    """Minimal user representation used inside task responses."""
+
     class Meta:
         model = User
         fields = ["id", "email", "fullname"]
@@ -16,6 +24,8 @@ class UserMiniSerializer(serializers.ModelSerializer):
 
 class TaskStatusField(serializers.ChoiceField):
     """
+    Map frontend status values to model values and back.
+
     Frontend: to-do | in-progress | review | done
     Model:    todo  | in_progress | review | done
     """
@@ -35,10 +45,35 @@ class TaskStatusField(serializers.ChoiceField):
         return super().to_representation(reverse.get(value, value))
 
 
-class TaskSerializer(serializers.ModelSerializer):
+class TaskReadSerializer(serializers.ModelSerializer):
+    """Read serializer for GET /api/tasks/ and GET /api/tasks/<id>/."""
+
     status = TaskStatusField(choices=Task.Status.choices)
     assignee = UserMiniSerializer(source="assigned_to", read_only=True)
     reviewer = UserMiniSerializer(read_only=True)
+
+    comments_count = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Task
+        fields = [
+            "id",
+            "board",
+            "title",
+            "description",
+            "status",
+            "priority",
+            "assignee",
+            "reviewer",
+            "due_date",
+            "comments_count",
+        ]
+
+
+class TaskWriteSerializer(serializers.ModelSerializer):
+    """Write serializer for POST /api/tasks/ and PATCH /api/tasks/<id>/."""
+
+    status = TaskStatusField(choices=Task.Status.choices)
 
     assignee_id = serializers.PrimaryKeyRelatedField(
         source="assigned_to",
@@ -55,8 +90,6 @@ class TaskSerializer(serializers.ModelSerializer):
         write_only=True,
     )
 
-    comments_count = serializers.SerializerMethodField()
-
     class Meta:
         model = Task
         fields = [
@@ -66,34 +99,34 @@ class TaskSerializer(serializers.ModelSerializer):
             "description",
             "status",
             "priority",
-            "assignee",
-            "reviewer",
             "assignee_id",
             "reviewer_id",
             "due_date",
-            "comments_count",
         ]
-
-    def get_comments_count(self, obj):
-        return Comment.objects.filter(task=obj).count()
+        read_only_fields = ["id"]
 
     def validate_title(self, value):
         return validate_not_empty(value, "title")
 
     def validate(self, attrs):
         board = attrs.get("board") or getattr(self.instance, "board", None)
+        if board is None:
+            return attrs
 
-        if board is not None:
-            assigned_to = attrs.get("assigned_to", getattr(self.instance, "assigned_to", None))
-            reviewer = attrs.get("reviewer", getattr(self.instance, "reviewer", None))
+        assigned_to = attrs.get(
+            "assigned_to", getattr(self.instance, "assigned_to", None)
+        )
+        reviewer = attrs.get("reviewer", getattr(self.instance, "reviewer", None))
 
-            validate_user_is_board_member(board, assigned_to, "assignee_id")
-            validate_user_is_board_member(board, reviewer, "reviewer_id")
+        validate_user_is_board_member(board, assigned_to, "assignee_id")
+        validate_user_is_board_member(board, reviewer, "reviewer_id")
 
         return attrs
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    """Serializer for nested task comments."""
+
     content = serializers.CharField(source="text")
     author = serializers.CharField(source="author.fullname", read_only=True)
     author_id = serializers.IntegerField(read_only=True)
@@ -102,6 +135,17 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ["id", "task", "author", "author_id", "content", "created_at"]
         read_only_fields = ["id", "task", "author", "author_id", "created_at"]
+
+    def to_internal_value(self, data):
+        """
+        Accept both frontend keys:
+        - content (preferred)
+        - text (legacy/alternative)
+        """
+        if isinstance(data, dict) and "content" not in data and "text" in data:
+            data = data.copy()
+            data["content"] = data.pop("text")
+        return super().to_internal_value(data)
 
     def validate_content(self, value):
         return validate_not_empty(value, "content")

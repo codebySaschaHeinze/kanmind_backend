@@ -17,12 +17,14 @@ from rest_framework.permissions import IsAuthenticated
 
 from boards_app.models import Board
 from .permissions import IsBoardMemberOrCreator
-from .serializers import BoardDetailSerializer, BoardListSerializer, BoardUpdateSerializer
+from .serializers import BoardReadSerializer, BoardWriteSerializer
 
 User = get_user_model()
 
 
 class BoardViewSet(viewsets.ModelViewSet):
+    """CRUD operations for boards limited to authorized board members."""
+    
     permission_classes = [IsAuthenticated, IsBoardMemberOrCreator]
 
     def get_queryset(self):
@@ -30,15 +32,18 @@ class BoardViewSet(viewsets.ModelViewSet):
         return Board.objects.filter(Q(members=user) | Q(created_by=user)).distinct()
 
     def get_serializer_class(self):
-        if self.action in ("list", "create"):
-            return BoardListSerializer
-        if self.action in ("update", "partial_update"):
-            return BoardUpdateSerializer
-        return BoardDetailSerializer
+        if self.action in ("create", "update", "partial_update"):
+            return BoardWriteSerializer
+        return BoardReadSerializer
 
     def perform_create(self, serializer):
         board = serializer.save(created_by=self.request.user)
         board.members.add(self.request.user)
+
+    def perform_update(self, serializer):
+        board = serializer.save()
+        if "members" in serializer.validated_data:
+            board.members.add(board.created_by)
 
 
 
