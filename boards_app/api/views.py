@@ -1,44 +1,45 @@
 """
 boards_app API views.
 
-Provides CRUD endpoints for boards:
+Provides CRUD endpoints for boards and email-check:
 - list/create/retrieve/update/destroy
 Access ist limited to board members and the board creator.
 """
 
+from django.db.models import Q
 from django.contrib.auth import get_user_model
-from rest_framework import status, viewsets
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
+
 from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 
 from boards_app.models import Board
 from .permissions import IsBoardMemberOrCreator
-from .serializers import BoardSerializer
-
+from .serializers import BoardDetailSerializer, BoardListSerializer, BoardUpdateSerializer
 
 User = get_user_model()
 
 
 class BoardViewSet(viewsets.ModelViewSet):
-    """CRUD operations for boards limited to authorized board members."""
-
-    serializer_class = BoardSerializer
     permission_classes = [IsAuthenticated, IsBoardMemberOrCreator]
 
     def get_queryset(self):
-        """Return boards where the current user is a member."""
         user = self.request.user
-        return Board.objects.filter(members=user).distinct()
-    
+        return Board.objects.filter(Q(members=user) | Q(created_by=user)).distinct()
+
+    def get_serializer_class(self):
+        if self.action in ("list", "create"):
+            return BoardListSerializer
+        if self.action in ("update", "partial_update"):
+            return BoardUpdateSerializer
+        return BoardDetailSerializer
+
     def perform_create(self, serializer):
-        """Create a board and ensure the creator is added as a member."""
         board = serializer.save(created_by=self.request.user)
         board.members.add(self.request.user)
 
-        members = serializer.validated_data.get("members", [])
-        for user in members:
-            board.members.add(user)
 
 
 class EmailCheckView(APIView):
