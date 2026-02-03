@@ -96,7 +96,7 @@ http://127.0.0.1:8000/api/
 #### PATCH /api/tasks/<task_id>/
 
 - Auth required (board member)
-- Example fields: status, assigned_to, reviewer, title, description
+- Example fields: status, assigned_to, assigned_id, reviewer, reviewer_id, title, description
 
 #### DELETE /api/tasks/<task_id>/
 
@@ -124,7 +124,7 @@ http://127.0.0.1:8000/api/
 #### POST /api/tasks/<task_id>/comments/
 
 - Auth required (board member)
-- Request: text
+- Request: content (or text)
 
 ##### Notes:
 
@@ -171,14 +171,11 @@ kanmind_backend/
 │  ├─ apps.py
 │  └─ models.py
 │
-├─ users_app/                     Custom user model + user lookup endpoint
+├─ users_app/                     Custom user model
 │  ├─ migrations/
-│  ├─ api/
-│  │  ├─ __init__.py
-│  │  ├─ views.py
-│  │  └─ urls.py
 │  ├─ models.py
 │  ├─ admin.py
+│  ├─ views.py
 │  └─ apps.py
 │
 ├─ boards_app/                    Boards domain (board + members)
