@@ -6,22 +6,18 @@ Provides CRUD endpoints for boards:
 Access ist limited to board members and the board creator.
 """
 
-from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
+from rest_framework import status, viewsets
 from rest_framework.permissions import IsAuthenticated
-
-from rest_framework import status
 from rest_framework.response import Response
-
-from rest_framework import viewsets
-
+from rest_framework.views import APIView
 
 from boards_app.models import Board
 from .permissions import IsBoardMemberOrCreator
 from .serializers import BoardSerializer
 
 
-
+User = get_user_model()
 
 
 class BoardViewSet(viewsets.ModelViewSet):
@@ -43,9 +39,6 @@ class BoardViewSet(viewsets.ModelViewSet):
         members = serializer.validated_data.get("members", [])
         for user in members:
             board.members.add(user)
-
-
-User = get_user_model()
 
 
 class EmailCheckView(APIView):
