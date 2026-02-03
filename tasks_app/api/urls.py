@@ -10,6 +10,10 @@ router.register("tasks", TaskViewSet, basename="tasks")
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("tasks/<int:task_id>/comments/", CommentViewSet.as_view({"get": "list", "post": "create"})),
-    path("tasks/<int:task_id>/comments/<int:pk>/", CommentViewSet.as_view({"delete": "destroy"})),
+    path("tasks/<int:task_id>/comments/", CommentViewSet.as_view(
+        {"get": "list", "post": "create"}
+    )),
+    path("tasks/<int:task_id>/comments/<int:pk>/", CommentViewSet.as_view(
+        {"delete": "destroy"}
+    )),
 ]

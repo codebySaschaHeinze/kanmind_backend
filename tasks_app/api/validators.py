@@ -13,4 +13,6 @@ def validate_user_is_board_member(board, user, field_name: str):
     if user is None:
         return
     if not board.members.filter(id=user.id).exists():
-        raise serializers.ValidationError({field_name: "Benutzer muss Board-Member sein."})
+        raise serializers.ValidationError(
+            {field_name: "Benutzer muss Board-Member sein."}
+        )

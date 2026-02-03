@@ -3,17 +3,17 @@ boards_app API views.
 
 Provides CRUD endpoints for boards and email-check:
 - list/create/retrieve/update/destroy
-Access ist limited to board members and the board creator.
+
+Access is limited to board members and the board creator.
 """
 
-from django.db.models import Q
 from django.contrib.auth import get_user_model
+from django.db.models import Q
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import viewsets
+from rest_framework import status, viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from boards_app.models import Board
 from .permissions import IsBoardMemberOrCreator
@@ -24,7 +24,7 @@ User = get_user_model()
 
 class BoardViewSet(viewsets.ModelViewSet):
     """CRUD operations for boards limited to authorized board members."""
-    
+
     permission_classes = [IsAuthenticated, IsBoardMemberOrCreator]
 
     def get_queryset(self):
@@ -46,7 +46,6 @@ class BoardViewSet(viewsets.ModelViewSet):
             board.members.add(board.created_by)
 
 
-
 class EmailCheckView(APIView):
     """Return basic user info for a given email address."""
 
@@ -55,16 +54,20 @@ class EmailCheckView(APIView):
     def get(self, request):
         email = request.query_params.get("email")
         if not email:
-            return Response({"detail": "Bitte gib eine E-Mail-Adresse an."},
-                status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Bitte gib eine E-Mail-Adresse an."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         try:
             user = User.objects.get(email=email)
-            return Response(
-                {"id": user.id, "email": user.email, "fullname": user.fullname},
-                status=status.HTTP_200_OK,
-            )
-           
         except User.DoesNotExist:
-            return Response({"detail": "Benutzer wurde nicht gefunden."}, 
-                status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"detail": "Benutzer wurde nicht gefunden."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        return Response(
+            {"id": user.id, "email": user.email, "fullname": user.fullname},
+            status=status.HTTP_200_OK,
+        )

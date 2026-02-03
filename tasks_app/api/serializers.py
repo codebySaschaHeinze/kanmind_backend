@@ -133,8 +133,21 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ["id", "task", "author", "author_id", "content", "created_at"]
-        read_only_fields = ["id", "task", "author", "author_id", "created_at"]
+        fields = [
+            "id",
+            "task",
+            "author",
+            "author_id",
+            "content",
+            "created_at"
+            ]
+        read_only_fields = [
+            "id",
+            "task",
+            "author",
+            "author_id",
+            "created_at"
+            ]
 
     def to_internal_value(self, data):
         """

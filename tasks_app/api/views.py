@@ -5,7 +5,7 @@ Provides CRUD endpoints for tasks and comments.
 """
 
 from django.db.models import Count
-from rest_framework import status, viewsets
+from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -76,17 +76,19 @@ class TaskViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class CommentViewSet(viewsets.ModelViewSet):
-    """CRUD operations for comments nested under a task."""
+class CommentViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
+    """List, create, and delete comments nested under a task."""
 
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated]
 
     def _get_task_id(self):
-        task_id = self.kwargs.get("task_id")
-        if task_id is None:
-            return None
-        return task_id
+        return self.kwargs.get("task_id")
 
     def get_queryset(self):
         task_id = self._get_task_id()
@@ -103,7 +105,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
         if task_id is None:
             return Response(
-                {"detail": "Task id is missing in URL."},
+                {"detail": "Task-ID fehlt in der URL."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
