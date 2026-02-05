@@ -239,6 +239,14 @@ source .venv/bin/activate
 
 ```text
 pip install -r requirements.txt
+
+python manage.py migrate
+```
+
+Create the guest user once (important for fresh databases)
+
+```text
+python manage.py ensure_guest_user
 ```
 
 If requirements.txt is not yet present:
