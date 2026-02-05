@@ -37,13 +37,10 @@ class BoardViewSet(viewsets.ModelViewSet):
         return BoardReadSerializer
 
     def perform_create(self, serializer):
-        board = serializer.save(created_by=self.request.user)
-        board.members.add(self.request.user)
+        serializer.save(created_by=self.request.user)
 
     def perform_update(self, serializer):
-        board = serializer.save()
-        if "members" in serializer.validated_data:
-            board.members.add(board.created_by)
+        serializer.save()
 
 
 class EmailCheckView(APIView):
