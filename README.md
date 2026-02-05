@@ -231,7 +231,6 @@ macOS/Linux:
 
 ```text
 python -m venv .venv
-
 source .venv/bin/activate
 ```
 
@@ -239,7 +238,6 @@ source .venv/bin/activate
 
 ```text
 pip install -r requirements.txt
-
 python manage.py migrate
 ```
 
@@ -253,9 +251,7 @@ If requirements.txt is not yet present:
 
 ```text
 pip install django djangorestframework django-cors-headers
-
 pip install python-dotenv
-
 pip freeze > requirements.txt
 ```
 
@@ -275,7 +271,6 @@ DEBUG=1
 
 ```text
 python manage.py makemigrations
-
 python manage.py migrate
 ```
 
