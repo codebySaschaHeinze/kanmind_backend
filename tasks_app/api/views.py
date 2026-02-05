@@ -4,7 +4,7 @@ tasks_app API views.
 Provides CRUD endpoints for tasks and comments.
 """
 
-from django.db.models import Count
+from django.db.models import Count, Q
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -24,7 +24,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return (
-            Task.objects.filter(board__members=user)
+            Task.objects.filter(Q(board__members=user) | Q(board__created_by=user))
             .select_related("assigned_to", "reviewer", "board")
             .annotate(comments_count=Count("task_comments"))
             .distinct()
@@ -55,11 +55,14 @@ class TaskViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        if not board.members.filter(id=request.user.id).exists():
+        is_member = board.members.filter(id=request.user.id).exists()
+        is_owner = (board.created_by_id == request.user.id)
+
+        if not (is_member or is_owner):
             return Response(
-                {"detail": "Du bist kein Board-Member."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
+            {"detail": "Du bist weder Board-Member noch Owner."},
+            status=status.HTTP_403_FORBIDDEN,
+        )
 
         return super().create(request, *args, **kwargs)
 
@@ -97,7 +100,11 @@ class CommentViewSet(
         if task_id is None:
             return Comment.objects.none()
 
-        return Comment.objects.filter(task_id=task_id, task__board__members=user)
+        return Comment.objects.filter(
+            task_id=task_id
+            ).filter(
+            Q(task__board__members=user) | Q(task__board__created_by=user)
+            ).distinct()
 
     def create(self, request, *args, **kwargs):
         task_id = self._get_task_id()
@@ -117,9 +124,12 @@ class CommentViewSet(
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        if not task.board.members.filter(id=user.id).exists():
+        is_member = task.board.members.filter(id=user.id).exists()
+        is_owner = (task.board.created_by_id == user.id)
+
+        if not (is_member or is_owner):
             return Response(
-                {"detail": "Du bist kein Board-Member."},
+                {"detail": "Du bist weder Board-Member noch Owner."},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
