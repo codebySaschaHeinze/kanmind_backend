@@ -41,3 +41,6 @@ Thumbs.db
 .mypy_cache/
 .ruff_cache/
 .pyright/
+
+# private
+users.txt
