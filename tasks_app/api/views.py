@@ -126,11 +126,12 @@ class CommentViewSet(
         if task_id is None:
             return Comment.objects.none()
 
-        return Comment.objects.filter(
-            task_id=task_id
-            ).filter(
-            Q(task__board__members=user) | Q(task__board__created_by=user)
-            ).distinct()
+        return (
+            Comment.objects.filter(task_id=task_id)
+            .filter(Q(task__board__members=user) | Q(task__board__created_by=user))
+            .distinct()
+            .order_by("created_at")
+        )
     
     def get_serializer_class(self):
         if self.action == "create":
@@ -159,4 +160,5 @@ class CommentViewSet(
         comment = Comment.objects.get(pk=comment_id)
         read_data = CommentReadSerializer(comment, context=self.get_serializer_context()).data
         return Response(read_data, status=status.HTTP_201_CREATED, headers=response.headers)
-
+    
+    
