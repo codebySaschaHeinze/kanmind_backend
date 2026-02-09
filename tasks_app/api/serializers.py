@@ -131,7 +131,8 @@ class CommentReadSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ["id", "created_at", "author", "content"]
 
+
 class CommentWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ["task", "content"]
+        fields = ["content"]

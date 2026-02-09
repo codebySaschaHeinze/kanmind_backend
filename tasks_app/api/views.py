@@ -135,6 +135,11 @@ class CommentViewSet(
         if self.action == "create":
             return CommentWriteSerializer
         return CommentReadSerializer
+    
+    def perform_create(self, serializer):
+        task_id = self._get_task_id()
+        task = Task.objects.get(pk=task_id)
+        serializer.save(task=task, author=self.request.user)
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
