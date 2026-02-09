@@ -103,6 +103,13 @@ class BoardWriteSerializer(serializers.ModelSerializer):
 
     def validate_title(self, value):
         return validate_not_empty(value, "title")
+    
+    def create(self, validated_data):
+        members = validated_data.pop("members", [])
+        board = Board.objects.create(**validated_data)
+        if members:
+            board.members.set(members)
+        return board
 
     def update(self, instance, validated_data):
         members = validated_data.pop("members", None)
