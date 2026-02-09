@@ -150,14 +150,13 @@ class CommentViewSet(
         serializer.save(task=task, author=self.request.user)
 
     def create(self, request, *args, **kwargs):
-        response = super().create(request, *args, **kwargs)
-        comment_id = response.data.get("id")
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
 
-        if comment_id is None:
-            return response
-
-        comment = self.get_queryset().get(pk=comment_id)
+        comment = serializer.instance
         read_data = CommentReadSerializer(comment, context=self.get_serializer_context()).data
-        return Response(read_data, status=status.HTTP_201_CREATED, headers=response.headers)
+        return Response(read_data, status=status.HTTP_201_CREATED)
+
     
     
