@@ -238,13 +238,6 @@ source .venv/bin/activate
 
 ```text
 pip install -r requirements.txt
-python manage.py migrate
-```
-
-Create the guest user once (important for fresh databases)
-
-```text
-python manage.py ensure_guest_user
 ```
 
 If requirements.txt is not yet present:
@@ -261,7 +254,7 @@ Create a .env file (use .env.template as reference)
 
 The project loads .env via python-dotenv in core/settings.py
 
-DJANGO_SECRET_KEY=your-secret-key
+SECRET_KEY = 'add_your_secret_key_here'
 
 ##### Optional:
 
@@ -270,11 +263,16 @@ DEBUG=1
 ### 4) Run migrations
 
 ```text
-python manage.py makemigrations
 python manage.py migrate
 ```
 
-### 5) Start server
+### 5) Create guest user
+
+```text
+python manage.py ensure_guest_user
+```
+
+### 6) Start server
 
 ```text
 python manage.py runserver
