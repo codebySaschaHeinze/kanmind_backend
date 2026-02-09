@@ -92,7 +92,6 @@ class CommentViewSet(
 ):
     """List, create, and delete comments nested under a task."""
 
-    permission_classes = [IsAuthenticated]
 
     def _get_task_id(self):
         return self.kwargs.get("task_id")
