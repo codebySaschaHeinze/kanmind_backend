@@ -50,6 +50,17 @@ class BoardViewSet(viewsets.ModelViewSet):
         read_data = BoardReadSerializer(board, context=self.get_serializer_context()).data
         return Response(read_data, status=status.HTTP_201_CREATED, headers=response.headers)
 
+    def partial_update(self, request, *args, **kwargs):
+        response = super().partial_update(request, *args, **kwargs)
+        board = self.get_object()
+        read_data = BoardReadSerializer(board, context=self.get_serializer_context()).data
+        return Response(read_data, status=response.status_code, headers=response.headers)
+
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        board = self.get_object()
+        read_data = BoardReadSerializer(board, context=self.get_serializer_context()).data
+        return Response(read_data, status=response.status_code, headers=response.headers)
 
     def perform_update(self, serializer):
         serializer.save()
