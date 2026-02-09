@@ -5,11 +5,13 @@ from django.db import models
 class Task(models.Model):
     """A task within the board with four workflow statuses."""
 
+
     class Status(models.TextChoices):
         TODO = "todo", "To Do"
         IN_PROGRESS = "in_progress", "In Progress"
         REVIEW = "review", "Review"
         DONE = "done", "Done"
+
 
     class Priority(models.TextChoices):
         LOW = "low", "Low"
@@ -64,7 +66,6 @@ class Task(models.Model):
 
     def __str__(self):
         return self.title
-
 
 
 class Comment(models.Model):

@@ -29,17 +29,15 @@ class BoardReadSerializer(serializers.ModelSerializer):
     Always returns counts + owner_id.
     Returns members + tasks only for retrieve (to keep list lightweight).
     """
+    
 
     owner_id = serializers.IntegerField(source="created_by_id", read_only=True)
-
     owner_data = UserMiniSerializer(source="created_by", read_only=True)
     members_data = UserMiniSerializer(source="members", many=True, read_only=True)
-
     member_count = serializers.SerializerMethodField()
     ticket_count = serializers.SerializerMethodField()
     tasks_to_do_count = serializers.SerializerMethodField()
     tasks_high_prio_count = serializers.SerializerMethodField()
-
     members = serializers.SerializerMethodField()
     tasks = serializers.SerializerMethodField()
 
@@ -131,6 +129,7 @@ class BoardWriteSerializer(serializers.ModelSerializer):
     - title (string)
     - members (list[int])  -> user ids (frontend sends ids)
     """
+
 
     members = serializers.PrimaryKeyRelatedField(
         many=True,

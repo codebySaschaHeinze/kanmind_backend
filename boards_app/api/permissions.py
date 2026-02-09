@@ -10,6 +10,7 @@ class IsBoardMemberOrCreator(BasePermission):
         
         return obj.members.filter(id=request.user.id).exists()
     
+    
 class IsBoardCreatorOnly(BasePermission):
     """Allow access only to the board creator."""
     def has_object_permission(self, request, view, obj):

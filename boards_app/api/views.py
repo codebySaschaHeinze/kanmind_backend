@@ -19,13 +19,16 @@ from boards_app.models import Board
 from .permissions import IsBoardMemberOrCreator, IsBoardCreatorOnly
 from .serializers import BoardReadSerializer, BoardWriteSerializer
 
+
 User = get_user_model()
 
 
 class BoardViewSet(viewsets.ModelViewSet):
     """CRUD operations for boards limited to authorized board members."""
 
+
     permission_classes = [IsAuthenticated, IsBoardMemberOrCreator]
+
 
     def get_queryset(self):
         user = self.request.user
@@ -74,7 +77,9 @@ class BoardViewSet(viewsets.ModelViewSet):
 class EmailCheckView(APIView):
     """Return basic user info for a given email address."""
 
+
     permission_classes = [IsAuthenticated]
+
 
     def get(self, request):
         email = request.query_params.get("email")

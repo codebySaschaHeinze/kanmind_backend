@@ -3,6 +3,7 @@ from rest_framework.routers import SimpleRouter
 
 from .views import BoardViewSet, EmailCheckView
 
+
 router = SimpleRouter()
 router.register("boards", BoardViewSet, basename="boards")
 

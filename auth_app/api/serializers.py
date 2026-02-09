@@ -7,6 +7,7 @@ from .validators import (
     validate_login,
 )
 
+
 User = get_user_model()
 
 GUEST_EMAIL = "guest@user.com"
@@ -15,10 +16,12 @@ GUEST_EMAIL = "guest@user.com"
 class RegistrationSerializer(serializers.Serializer):
     """Validate registration payload and create a new user."""
 
+
     fullname = serializers.CharField(max_length=150)
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True, min_length=8)
     repeated_password = serializers.CharField(write_only=True, min_length=8)
+
 
     def validate_email(self, value):
         """Ensure email is unique and not reserved."""
@@ -45,8 +48,10 @@ class RegistrationSerializer(serializers.Serializer):
 class LoginSerializer(serializers.Serializer):
     """Validate login payload and attach authenticated user."""
 
+
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
+
 
     def validate(self, attrs):
         """Authenticate user by email and password."""

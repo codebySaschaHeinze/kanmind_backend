@@ -8,6 +8,7 @@ from tasks_app.models import Task
 class IsTaskBoardMember(BasePermission):
     """Allow access if the user is board member or board owner."""
 
+
     def has_permission(self, request, view):
         if getattr(view, "action", None) != "create":
             return True
@@ -39,12 +40,14 @@ class IsTaskOwnerOrBoardCreator(BasePermission):
 class IsCommentAuthorOnly(BasePermission):
     """Allow delete only for the comment author."""
 
+
     def has_object_permission(self, request, view, obj):
         return obj.author_id == request.user.id
 
 
 class IsTaskBoardMemberForComment(BasePermission):
     """Allow comment access only if user is member/owner of the task's board."""
+
 
     def has_permission(self, request, view):
         task_id = view.kwargs.get("task_id")

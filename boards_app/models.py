@@ -5,6 +5,7 @@ from django.db import models
 class Board(models.Model):
     """A Kanban board with members and a creator."""
     
+    
     title = models.CharField(max_length=255)
 
     created_by = models.ForeignKey(

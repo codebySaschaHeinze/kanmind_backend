@@ -11,11 +11,13 @@ from rest_framework import serializers
 from tasks_app.models import Comment, Task
 from .validators import validate_not_empty, validate_user_is_board_member
 
+
 User = get_user_model()
 
 
 class UserMiniSerializer(serializers.ModelSerializer):
     """Minimal user representation used inside task responses."""
+
 
     class Meta:
         model = User
@@ -29,6 +31,7 @@ class TaskStatusField(serializers.ChoiceField):
     Frontend: to-do | in-progress | review | done
     Model:    todo  | in_progress | review | done
     """
+
 
     def to_internal_value(self, data):
         mapping = {
@@ -48,10 +51,10 @@ class TaskStatusField(serializers.ChoiceField):
 class TaskReadSerializer(serializers.ModelSerializer):
     """Read serializer for GET /api/tasks/ and GET /api/tasks/<id>/."""
 
+
     status = TaskStatusField(choices=Task.Status.choices)
     assignee = UserMiniSerializer(source="assigned_to", read_only=True)
     reviewer = UserMiniSerializer(read_only=True)
-
     comments_count = serializers.IntegerField(read_only=True)
 
     class Meta:
