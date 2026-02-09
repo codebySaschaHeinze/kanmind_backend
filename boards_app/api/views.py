@@ -39,6 +39,18 @@ class BoardViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
 
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        board_id = response.data.get("id")
+
+        if board_id is None:
+            return response
+
+        board = self.get_queryset().get(pk=board_id)
+        read_data = BoardReadSerializer(board, context=self.get_serializer_context()).data
+        return Response(read_data, status=status.HTTP_201_CREATED, headers=response.headers)
+
+
     def perform_update(self, serializer):
         serializer.save()
 
