@@ -103,6 +103,8 @@ class CommentViewSet(
 
         if task_id is None:
             return Comment.objects.none()
+        
+        get_object_or_404(Task, pk=task_id)
 
         return (
             Comment.objects.filter(task_id=task_id)
