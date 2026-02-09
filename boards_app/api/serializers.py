@@ -7,7 +7,14 @@ from tasks_app.api.serializers import TaskReadSerializer
 
 from .validators import validate_not_empty
 
+
 User = get_user_model()
+
+
+class UserMiniSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "email", "fullname"]
 
 
 class BoardReadSerializer(serializers.ModelSerializer):
@@ -24,6 +31,9 @@ class BoardReadSerializer(serializers.ModelSerializer):
 
     owner_id = serializers.IntegerField(source="created_by_id", read_only=True)
 
+    owner_data = UserMiniSerializer(source="created_by", read_only=True)
+    members_data = UserMiniSerializer(source="members", many=True, read_only=True)
+
     member_count = serializers.SerializerMethodField()
     ticket_count = serializers.SerializerMethodField()
     tasks_to_do_count = serializers.SerializerMethodField()
@@ -38,6 +48,8 @@ class BoardReadSerializer(serializers.ModelSerializer):
             "id",
             "title",
             "owner_id",
+            "owner_data",
+            "members_data",
             "member_count",
             "ticket_count",
             "tasks_to_do_count",
@@ -46,17 +58,31 @@ class BoardReadSerializer(serializers.ModelSerializer):
             "tasks",
         ]
 
-    def _is_retrieve(self) -> bool:
-        """Return True if the current view action is 'retrieve'."""
+    def _action(self):
         view = self.context.get("view")
-        return bool(view and getattr(view, "action", None) == "retrieve")
-    
+        return getattr(view, "action", None) if view else None
+
+    def _is_retrieve(self) -> bool:
+        return self._action() == "retrieve"
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
+        action = self._action()
 
-        if not self._is_retrieve():
+        if action in ("update", "partial_update"):
+            return {
+                "id": data.get("id"),
+                "title": data.get("title"),
+                "owner_data": data.get("owner_data"),
+                "members_data": data.get("members_data"),
+            }
+
+        if action != "retrieve":
             data.pop("members", None)
             data.pop("tasks", None)
+
+        data.pop("owner_data", None)
+        data.pop("members_data", None)
         return data
 
     def get_member_count(self, obj):
@@ -82,7 +108,7 @@ class BoardReadSerializer(serializers.ModelSerializer):
     def get_tasks(self, obj):
         if not self._is_retrieve():
             return []
-        return TaskReadSerializer(obj.tasks.all(), many=True).data
+        return TaskReadSerializer(obj.tasks.all(), many=True, context=self.context).data
 
 
 class BoardWriteSerializer(serializers.ModelSerializer):
