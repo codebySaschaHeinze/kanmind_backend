@@ -5,6 +5,8 @@ Provides CRUD endpoints for tasks and comments.
 """
 
 from django.db.models import Count, Q
+from django.shortcuts import get_object_or_404
+
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -12,9 +14,13 @@ from rest_framework.response import Response
 
 from boards_app.models import Board
 from tasks_app.models import Comment, Task
-from .permissions import IsTaskBoardMember
-from .serializers import CommentSerializer, TaskReadSerializer, TaskWriteSerializer
-
+from .permissions import IsTaskBoardMember, IsTaskBoardMemberForComment
+from .serializers import (
+    CommentReadSerializer,
+    CommentWriteSerializer,
+    TaskReadSerializer,
+    TaskWriteSerializer,
+)
 
 class TaskViewSet(viewsets.ModelViewSet):
     """CRUD operations for tasks limited to authorized board members."""
@@ -87,53 +93,36 @@ class CommentViewSet(
 ):
     """List, create, and delete comments nested under a task."""
 
-    serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsTaskBoardMemberForComment]
 
     def _get_task_id(self):
         return self.kwargs.get("task_id")
 
     def get_queryset(self):
         task_id = self._get_task_id()
-        user = self.request.user
-
         if task_id is None:
             return Comment.objects.none()
 
-        return Comment.objects.filter(
-            task_id=task_id
-            ).filter(
-            Q(task__board__members=user) | Q(task__board__created_by=user)
-            ).distinct()
+        return (
+            Comment.objects.filter(task_id=task_id)
+            .select_related("author", "task", "task__board")
+            .order_by("id")
+            )
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return CommentWriteSerializer
+        return CommentReadSerializer
+
+    def perform_create(self, serializer):
+        task = get_object_or_404(Task, pk=self.kwargs["task_id"])
+        serializer.save(task=task, author=self.request.user)
 
     def create(self, request, *args, **kwargs):
-        task_id = self._get_task_id()
-        user = request.user
+        write_serializer = self.get_serializer(data=request.data)
+        write_serializer.is_valid(raise_exception=True)
+        self.perform_create(write_serializer)
 
-        if task_id is None:
-            return Response(
-                {"detail": "Task-ID fehlt in der URL."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        try:
-            task = Task.objects.select_related("board").get(id=task_id)
-        except (Task.DoesNotExist, ValueError):
-            return Response(
-                {"detail": "Task wurde nicht gefunden."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        is_member = task.board.members.filter(id=user.id).exists()
-        is_owner = (task.board.created_by_id == user.id)
-
-        if not (is_member or is_owner):
-            return Response(
-                {"detail": "Du bist weder Board-Member noch Owner."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(task=task, author=user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        comment = Comment.objects.select_related("author").get(pk=write_serializer.instance.pk)
+        data = CommentReadSerializer(comment, context=self.get_serializer_context()).data
+        return Response(data, status=status.HTTP_201_CREATED)

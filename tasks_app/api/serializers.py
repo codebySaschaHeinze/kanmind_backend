@@ -1,8 +1,15 @@
 """
 tasks_app API serializers.
 
-- TaskReadSerializer: output for GET (list/retrieve)
-- TaskWriteSerializer: input for POST/PATCH (create/update)
+This module contains serializers for the tasks_app API.
+
+Conventions:
+- *ReadSerializer classes define the exact response schema for GET requests.
+- *WriteSerializer classes define the accepted input schema for POST/PATCH requests.
+
+Important:
+- The endpoint documentation is treated as a contract. Responses must not include
+  additional fields that are not specified there.
 """
 
 from django.contrib.auth import get_user_model
@@ -46,12 +53,11 @@ class TaskStatusField(serializers.ChoiceField):
 
 
 class TaskReadSerializer(serializers.ModelSerializer):
-    """Read serializer for GET /api/tasks/ and GET /api/tasks/<id>/."""
+    """Response serializer for GET /api/tasks/ and GET /api/tasks/<id>/."""
 
     status = TaskStatusField(choices=Task.Status.choices)
     assignee = UserMiniSerializer(source="assigned_to", read_only=True)
     reviewer = UserMiniSerializer(read_only=True)
-
     comments_count = serializers.IntegerField(read_only=True)
 
     class Meta:
@@ -71,7 +77,7 @@ class TaskReadSerializer(serializers.ModelSerializer):
 
 
 class TaskWriteSerializer(serializers.ModelSerializer):
-    """Write serializer for POST /api/tasks/ and PATCH /api/tasks/<id>/."""
+    """Input serializer for POST /api/tasks/ and PATCH /api/tasks/<id>/."""
 
     status = TaskStatusField(choices=Task.Status.choices)
 
@@ -113,9 +119,7 @@ class TaskWriteSerializer(serializers.ModelSerializer):
         if board is None:
             return attrs
 
-        assigned_to = attrs.get(
-            "assigned_to", getattr(self.instance, "assigned_to", None)
-        )
+        assigned_to = attrs.get("assigned_to", getattr(self.instance, "assigned_to", None))
         reviewer = attrs.get("reviewer", getattr(self.instance, "reviewer", None))
 
         validate_user_is_board_member(board, assigned_to, "assignee_id")
@@ -124,41 +128,38 @@ class TaskWriteSerializer(serializers.ModelSerializer):
         return attrs
 
 
-class CommentSerializer(serializers.ModelSerializer):
-    """Serializer for nested task comments."""
+class CommentReadSerializer(serializers.ModelSerializer):
+    """
+    Response serializer for task comments.
 
-    content = serializers.CharField(source="text")
+    Contract (endpoint documentation):
+    - id
+    - created_at
+    - author (fullname as string)
+    - content
+    """
+
     author = serializers.CharField(source="author.fullname", read_only=True)
-    author_id = serializers.IntegerField(read_only=True)
+    content = serializers.CharField(source="text", read_only=True)
 
     class Meta:
         model = Comment
-        fields = [
-            "id",
-            "task",
-            "author",
-            "author_id",
-            "content",
-            "created_at"
-            ]
-        read_only_fields = [
-            "id",
-            "task",
-            "author",
-            "author_id",
-            "created_at"
-            ]
+        fields = ["id", "created_at", "author", "content"]
 
-    def to_internal_value(self, data):
-        """
-        Accept both frontend keys:
-        - content (preferred)
-        - text (legacy/alternative)
-        """
-        if isinstance(data, dict) and "content" not in data and "text" in data:
-            data = data.copy()
-            data["content"] = data.pop("text")
-        return super().to_internal_value(data)
+
+class CommentWriteSerializer(serializers.ModelSerializer):
+    """
+    Input serializer for creating a comment.
+
+    The comment is linked to a task via the URL (/tasks/<task_id>/comments/),
+    and the author is taken from request.user in the view.
+    """
+
+    content = serializers.CharField(source="text")
+
+    class Meta:
+        model = Comment
+        fields = ["content"]
 
     def validate_content(self, value):
         return validate_not_empty(value, "content")
