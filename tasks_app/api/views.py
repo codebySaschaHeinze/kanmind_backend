@@ -55,7 +55,7 @@ class TaskViewSet(viewsets.ModelViewSet):
             )
 
         try:
-            board = Board.objects.get(id=board_id)
+            board = get_object_or_404(Board, id=board_id)
         except Board.DoesNotExist:
             return Response(
                 {"detail": "Board wurde nicht gefunden."},
