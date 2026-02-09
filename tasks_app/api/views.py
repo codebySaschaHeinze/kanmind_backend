@@ -64,7 +64,28 @@ class TaskViewSet(viewsets.ModelViewSet):
             status=status.HTTP_403_FORBIDDEN,
         )
 
-        return super().create(request, *args, **kwargs)
+        response = super().create(request, *args, **kwargs)
+        task_id = response.data.get("id")
+
+        if task_id is None:
+            return response 
+
+        task = self.get_queryset().get(pk=task_id)
+        read_data = TaskReadSerializer(task, context=self.get_serializer_context()).data
+        return Response(read_data, status=status.HTTP_201_CREATED, headers=response.headers)
+
+    def partial_update(self, request, *args, **kwargs):
+        response = super().partial_update(request, *args, **kwargs)
+        task = self.get_object()
+        read_data = TaskReadSerializer(task, context=self.get_serializer_context()).data
+        return Response(read_data, status=response.status_code, headers=response.headers)
+
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        task = self.get_object()
+        read_data = TaskReadSerializer(task, context=self.get_serializer_context()).data
+        return Response(read_data, status=response.status_code, headers=response.headers)
+
 
     @action(detail=False, methods=["get"], url_path="assigned-to-me")
     def assigned_to_me(self, request):
