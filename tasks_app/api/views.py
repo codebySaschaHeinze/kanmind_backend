@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from boards_app.models import Board
 from tasks_app.models import Comment, Task
 from .permissions import IsTaskBoardMember, IsTaskOwnerOrBoardCreator, IsCommentAuthorOnly
-from .serializers import CommentSerializer, TaskReadSerializer, TaskWriteSerializer
+from .serializers import CommentReadSerializer, CommentWriteSerializer, TaskReadSerializer, TaskWriteSerializer
 
 
 class TaskViewSet(viewsets.ModelViewSet):
@@ -37,8 +37,9 @@ class TaskViewSet(viewsets.ModelViewSet):
     
     def get_permissions(self):
         if self.action == "destroy":
-            return [IsAuthenticated(), IsCommentAuthorOnly()]
-        return [IsAuthenticated()]
+            return [IsAuthenticated(), IsTaskOwnerOrBoardCreator()]
+        return [IsAuthenticated(), IsTaskBoardMember()]
+
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
@@ -91,11 +92,6 @@ class TaskViewSet(viewsets.ModelViewSet):
         read_data = TaskReadSerializer(task, context=self.get_serializer_context()).data
         return Response(read_data, status=response.status_code, headers=response.headers)
     
-    def get_permissions(self):
-        if self.action == "destroy":
-            return [IsAuthenticated(), IsTaskOwnerOrBoardCreator()]
-        return [IsAuthenticated(), IsTaskBoardMember()]
-
     @action(detail=False, methods=["get"], url_path="assigned-to-me")
     def assigned_to_me(self, request):
         queryset = self.get_queryset().filter(assigned_to=request.user)
@@ -117,7 +113,6 @@ class CommentViewSet(
 ):
     """List, create, and delete comments nested under a task."""
 
-    serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated]
 
     def _get_task_id(self):
@@ -135,35 +130,20 @@ class CommentViewSet(
             ).filter(
             Q(task__board__members=user) | Q(task__board__created_by=user)
             ).distinct()
+    
+    def get_serializer_class(self):
+        if self.action == "create":
+            return CommentWriteSerializer
+        return CommentReadSerializer
 
     def create(self, request, *args, **kwargs):
-        task_id = self._get_task_id()
-        user = request.user
+        response = super().create(request, *args, **kwargs)
+        comment_id = response.data.get("id")
 
-        if task_id is None:
-            return Response(
-                {"detail": "Task-ID fehlt in der URL."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        if comment_id is None:
+            return response
 
-        try:
-            task = Task.objects.select_related("board").get(id=task_id)
-        except (Task.DoesNotExist, ValueError):
-            return Response(
-                {"detail": "Task wurde nicht gefunden."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+        comment = Comment.objects.get(pk=comment_id)
+        read_data = CommentReadSerializer(comment, context=self.get_serializer_context()).data
+        return Response(read_data, status=status.HTTP_201_CREATED, headers=response.headers)
 
-        is_member = task.board.members.filter(id=user.id).exists()
-        is_owner = (task.board.created_by_id == user.id)
-
-        if not (is_member or is_owner):
-            return Response(
-                {"detail": "Du bist weder Board-Member noch Owner."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(task=task, author=user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)

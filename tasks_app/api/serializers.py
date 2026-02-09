@@ -124,41 +124,14 @@ class TaskWriteSerializer(serializers.ModelSerializer):
         return attrs
 
 
-class CommentSerializer(serializers.ModelSerializer):
-    """Serializer for nested task comments."""
-
-    content = serializers.CharField(source="text")
+class CommentReadSerializer(serializers.ModelSerializer):
     author = serializers.CharField(source="author.fullname", read_only=True)
-    author_id = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Comment
-        fields = [
-            "id",
-            "task",
-            "author",
-            "author_id",
-            "content",
-            "created_at"
-            ]
-        read_only_fields = [
-            "id",
-            "task",
-            "author",
-            "author_id",
-            "created_at"
-            ]
+        fields = ["id", "created_at", "author", "content"]
 
-    def to_internal_value(self, data):
-        """
-        Accept both frontend keys:
-        - content (preferred)
-        - text (legacy/alternative)
-        """
-        if isinstance(data, dict) and "content" not in data and "text" in data:
-            data = data.copy()
-            data["content"] = data.pop("text")
-        return super().to_internal_value(data)
-
-    def validate_content(self, value):
-        return validate_not_empty(value, "content")
+class CommentWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ["task", "content"]
