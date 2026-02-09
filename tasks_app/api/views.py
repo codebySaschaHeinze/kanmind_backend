@@ -12,7 +12,7 @@ from rest_framework.response import Response
 
 from boards_app.models import Board
 from tasks_app.models import Comment, Task
-from .permissions import IsTaskBoardMember, IsTaskOwnerOrBoardCreator
+from .permissions import IsTaskBoardMember, IsTaskOwnerOrBoardCreator, IsCommentAuthorOnly
 from .serializers import CommentSerializer, TaskReadSerializer, TaskWriteSerializer
 
 
@@ -34,6 +34,11 @@ class TaskViewSet(viewsets.ModelViewSet):
         if self.action in ("create", "update", "partial_update"):
             return TaskWriteSerializer
         return TaskReadSerializer
+    
+    def get_permissions(self):
+        if self.action == "destroy":
+            return [IsAuthenticated(), IsCommentAuthorOnly()]
+        return [IsAuthenticated()]
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
