@@ -12,7 +12,7 @@ from rest_framework.response import Response
 
 from boards_app.models import Board
 from tasks_app.models import Comment, Task
-from .permissions import IsTaskBoardMember
+from .permissions import IsTaskBoardMember, IsTaskOwnerOrBoardCreator
 from .serializers import CommentSerializer, TaskReadSerializer, TaskWriteSerializer
 
 
@@ -85,7 +85,11 @@ class TaskViewSet(viewsets.ModelViewSet):
         task = self.get_object()
         read_data = TaskReadSerializer(task, context=self.get_serializer_context()).data
         return Response(read_data, status=response.status_code, headers=response.headers)
-
+    
+    def get_permissions(self):
+        if self.action == "destroy":
+            return [IsAuthenticated(), IsTaskOwnerOrBoardCreator()]
+        return [IsAuthenticated(), IsTaskBoardMember()]
 
     @action(detail=False, methods=["get"], url_path="assigned-to-me")
     def assigned_to_me(self, request):
