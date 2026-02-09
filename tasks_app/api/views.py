@@ -5,6 +5,7 @@ Provides CRUD endpoints for tasks and comments.
 """
 
 from django.db.models import Count, Q
+from django.shortcuts import get_object_or_404
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -136,9 +137,14 @@ class CommentViewSet(
             return CommentWriteSerializer
         return CommentReadSerializer
     
+    def get_permissions(self):
+        if self.action == "destroy":
+            return [IsAuthenticated(), IsCommentAuthorOnly()]
+        return [IsAuthenticated()]
+    
     def perform_create(self, serializer):
         task_id = self._get_task_id()
-        task = Task.objects.get(pk=task_id)
+        task = get_object_or_404(Task, pk=task_id)
         serializer.save(task=task, author=self.request.user)
 
     def create(self, request, *args, **kwargs):
