@@ -1,4 +1,6 @@
+from django.db.models import Q
 from rest_framework.permissions import BasePermission
+from tasks_app.models import Task
 
 
 class IsTaskBoardMember(BasePermission):
@@ -21,3 +23,15 @@ class IsCommentAuthorOnly(BasePermission):
     """Allow delete only for the comment author."""
     def has_object_permission(self, request, view, obj):
         return obj.author_id == request.user.id
+    
+class IsTaskBoardMemberForComment(BasePermission):
+    """Allow comment access only if user is member/owner of the task's board."""
+    def has_permission(self, request, view):
+        task_id = view.kwargs.get("task_id")
+        if not task_id:
+            return False
+        return Task.objects.filter(
+            pk=task_id,
+        ).filter(
+            Q(board__members=request.user) | Q(board__created_by=request.user)
+        ).exists()

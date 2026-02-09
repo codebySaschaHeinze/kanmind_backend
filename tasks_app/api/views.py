@@ -13,7 +13,7 @@ from rest_framework.response import Response
 
 from boards_app.models import Board
 from tasks_app.models import Comment, Task
-from .permissions import IsTaskBoardMember, IsTaskOwnerOrBoardCreator, IsCommentAuthorOnly
+from .permissions import IsTaskBoardMember, IsTaskOwnerOrBoardCreator, IsCommentAuthorOnly, IsTaskBoardMemberForComment
 from .serializers import CommentReadSerializer, CommentWriteSerializer, TaskReadSerializer, TaskWriteSerializer
 
 
@@ -140,6 +140,8 @@ class CommentViewSet(
     def get_permissions(self):
         if self.action == "destroy":
             return [IsAuthenticated(), IsCommentAuthorOnly()]
+        if self.action in ("list", "create"):
+            return [IsAuthenticated(), IsTaskBoardMemberForComment()]
         return [IsAuthenticated()]
     
     def perform_create(self, serializer):
