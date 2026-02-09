@@ -50,6 +50,14 @@ class BoardReadSerializer(serializers.ModelSerializer):
         """Return True if the current view action is 'retrieve'."""
         view = self.context.get("view")
         return bool(view and getattr(view, "action", None) == "retrieve")
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        if not self._is_retrieve():
+            data.pop("members", None)
+            data.pop("tasks", None)
+        return data
 
     def get_member_count(self, obj):
         return obj.members.count()
