@@ -46,39 +46,18 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         board_id = request.data.get("board")
-
         if not board_id:
-            return Response(
-                {"detail": "Ein Board ist erforderlich."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        try:
-            board = get_object_or_404(Board, id=board_id)
-        except Board.DoesNotExist:
-            return Response(
-                {"detail": "Board wurde nicht gefunden."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        is_member = board.members.filter(id=request.user.id).exists()
-        is_owner = (board.created_by_id == request.user.id)
-
-        if not (is_member or is_owner):
-            return Response(
-            {"detail": "Du bist weder Board-Member noch Owner."},
-            status=status.HTTP_403_FORBIDDEN,
-        )
+            return Response({"detail": "Ein Board ist erforderlich."}, status=status.HTTP_400_BAD_REQUEST)
 
         response = super().create(request, *args, **kwargs)
         task_id = response.data.get("id")
-
         if task_id is None:
-            return response 
+            return response
 
         task = self.get_queryset().get(pk=task_id)
         read_data = TaskReadSerializer(task, context=self.get_serializer_context()).data
         return Response(read_data, status=status.HTTP_201_CREATED, headers=response.headers)
+
 
     def partial_update(self, request, *args, **kwargs):
         response = super().partial_update(request, *args, **kwargs)
