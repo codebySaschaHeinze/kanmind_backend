@@ -22,13 +22,20 @@ class TaskViewSet(viewsets.ModelViewSet):
     
 
     def get_queryset(self):
+        task_id = self._get_task_id()
         user = self.request.user
+
+        if task_id is None:
+            return Comment.objects.none()
+
+        get_object_or_404(Task, pk=task_id)
+
         return (
-            Task.objects.filter(Q(board__members=user) | Q(board__created_by=user))
-            .select_related("assigned_to", "reviewer", "board")
-            .annotate(comments_count=Count("task_comments"))
+            Comment.objects.filter(task_id=task_id)
+            .filter(Q(task__board__members=user) | Q(task__board__created_by=user))
             .distinct()
-        )
+            .order_by("created_at")
+            )
 
     def get_serializer_class(self):
         if self.action in ("create", "update", "partial_update"):
@@ -42,12 +49,16 @@ class TaskViewSet(viewsets.ModelViewSet):
 
 
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
+        task_id = self._get_task_id()
+        task = get_object_or_404(Task, pk=task_id)
+        serializer.save(task=task, author=self.request.user)
 
     def create(self, request, *args, **kwargs):
         board_id = request.data.get("board")
         if not board_id:
             return Response({"detail": "Ein Board ist erforderlich."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        board = get_object_or_404(Board, pk=board_id)
 
         response = super().create(request, *args, **kwargs)
         task_id = response.data.get("id")
