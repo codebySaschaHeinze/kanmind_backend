@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
@@ -73,9 +74,13 @@ class BoardReadSerializer(serializers.ModelSerializer):
             return {
                 "id": data.get("id"),
                 "title": data.get("title"),
-                "owner_data": data.get("owner_data"),
-                "members_data": data.get("members_data"),
-            }
+                "member_count": data.get("member_count"),
+                "ticket_count": data.get("ticket_count"),
+                "tasks_to_do_count": data.get("tasks_to_do_count"),
+                "tasks_high_prio_count": data.get("tasks_high_prio_count"),
+                "owner_id": data.get("owner_id"),
+                }
+            
 
         if action != "retrieve":
             data.pop("members", None)
@@ -108,7 +113,10 @@ class BoardReadSerializer(serializers.ModelSerializer):
     def get_tasks(self, obj):
         if not self._is_retrieve():
             return []
-        return TaskReadSerializer(obj.tasks.all(), many=True, context=self.context).data
+        qs = obj.tasks.all().select_related("assigned_to", "reviewer").annotate(
+            comments_count=Count("task_comments")
+            )
+        return TaskReadSerializer(qs, many=True, context=self.context).data
 
 
 class BoardWriteSerializer(serializers.ModelSerializer):
