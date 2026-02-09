@@ -238,7 +238,6 @@ source .venv/bin/activate
 
 ```text
 pip install -r requirements.txt
-python manage.py migrate
 ```
 
 Create the guest user once (important for fresh databases)
@@ -270,7 +269,6 @@ DEBUG=1
 ### 4) Run migrations
 
 ```text
-python manage.py makemigrations
 python manage.py migrate
 ```
 
