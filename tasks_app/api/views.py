@@ -157,7 +157,7 @@ class CommentViewSet(
         if comment_id is None:
             return response
 
-        comment = Comment.objects.get(pk=comment_id)
+        comment = self.get_queryset().get(pk=comment_id)
         read_data = CommentReadSerializer(comment, context=self.get_serializer_context()).data
         return Response(read_data, status=status.HTTP_201_CREATED, headers=response.headers)
     
