@@ -1,12 +1,13 @@
+"""
+user_auth_app API serializers.
+
+This module contains serializers for authentication endpoints.
+"""
+
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .validators import (
-    validate_unique_email,
-    validate_passwords_match,
-    validate_login,
-)
-
+from .validators import validate_login, validate_passwords_match, validate_unique_email
 
 User = get_user_model()
 
@@ -22,13 +23,14 @@ class RegistrationSerializer(serializers.Serializer):
     repeated_password = serializers.CharField(write_only=True, min_length=8)
 
     def validate_email(self, value):
-        """Ensure email is unique and not reserved."""
-        if value.strip().lower() == GUEST_EMAIL:
+        """Validate email."""
+        email = value.strip().lower()
+        if email == GUEST_EMAIL:
             raise serializers.ValidationError("Diese E-Mail ist reserviert.")
         return validate_unique_email(value)
 
     def validate(self, attrs):
-        """Ensure passwords match."""
+        """Ensure password and repeated_password match."""
         validate_passwords_match(attrs["password"], attrs["repeated_password"])
         return attrs
 
@@ -40,6 +42,7 @@ class RegistrationSerializer(serializers.Serializer):
         user = User(**validated_data)
         user.set_password(password)
         user.save()
+
         return user
 
 
@@ -50,6 +53,6 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
-        """Authenticate user by email and password."""
+        """Authenticate the user and attach the user object to attrs."""
         attrs["user"] = validate_login(attrs["email"], attrs["password"])
         return attrs
