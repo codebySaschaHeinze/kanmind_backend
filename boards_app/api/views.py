@@ -16,7 +16,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from boards_app.models import Board
-from .permissions import IsBoardMemberOrCreator
+from .permissions import IsBoardMemberOrCreator, IsBoardCreatorOnly
 from .serializers import BoardReadSerializer, BoardWriteSerializer
 
 User = get_user_model()
@@ -35,6 +35,11 @@ class BoardViewSet(viewsets.ModelViewSet):
         if self.action in ("create", "update", "partial_update"):
             return BoardWriteSerializer
         return BoardReadSerializer
+    
+    def get_permissions(self):
+        if self.action == "destroy":
+            return [IsAuthenticated(), IsBoardCreatorOnly()]
+        return [IsAuthenticated(), IsBoardMemberOrCreator()]
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
