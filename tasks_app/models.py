@@ -66,7 +66,6 @@ class Task(models.Model):
         return self.title
 
 
-
 class Comment(models.Model):
     """A comment within a task."""
 

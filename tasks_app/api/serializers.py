@@ -3,13 +3,6 @@ tasks_app API serializers.
 
 This module contains serializers for the tasks_app API.
 
-Conventions:
-- *ReadSerializer classes define the exact response schema for GET requests.
-- *WriteSerializer classes define the accepted input schema for POST/PATCH requests.
-
-Important:
-- The endpoint documentation is treated as a contract. Responses must not include
-  additional fields that are not specified there.
 """
 
 from django.contrib.auth import get_user_model
@@ -17,6 +10,7 @@ from rest_framework import serializers
 
 from tasks_app.models import Comment, Task
 from .validators import validate_not_empty, validate_user_is_board_member
+
 
 User = get_user_model()
 
@@ -129,15 +123,7 @@ class TaskWriteSerializer(serializers.ModelSerializer):
 
 
 class CommentReadSerializer(serializers.ModelSerializer):
-    """
-    Response serializer for task comments.
-
-    Contract (endpoint documentation):
-    - id
-    - created_at
-    - author (fullname as string)
-    - content
-    """
+    """Response serializer for task comments."""
 
     author = serializers.CharField(source="author.fullname", read_only=True)
     content = serializers.CharField(source="text", read_only=True)
@@ -148,12 +134,7 @@ class CommentReadSerializer(serializers.ModelSerializer):
 
 
 class CommentWriteSerializer(serializers.ModelSerializer):
-    """
-    Input serializer for creating a comment.
-
-    The comment is linked to a task via the URL (/tasks/<task_id>/comments/),
-    and the author is taken from request.user in the view.
-    """
+    """Input serializer for creating a comment."""
 
     content = serializers.CharField(source="text")
 

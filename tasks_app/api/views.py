@@ -22,6 +22,7 @@ from .serializers import (
     TaskWriteSerializer,
 )
 
+
 class TaskViewSet(viewsets.ModelViewSet):
     """CRUD operations for tasks limited to authorized board members."""
 

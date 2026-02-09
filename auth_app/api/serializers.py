@@ -7,6 +7,7 @@ from .validators import (
     validate_login,
 )
 
+
 User = get_user_model()
 
 GUEST_EMAIL = "guest@user.com"

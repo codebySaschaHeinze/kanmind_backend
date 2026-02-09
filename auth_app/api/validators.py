@@ -11,7 +11,6 @@ def validate_unique_email(email: str) -> str:
         raise serializers.ValidationError("Diese Email existiert bereits.")
     return email
 
-
 def validate_passwords_match(password: str, repeated_password: str) -> None:
     """Raise ValidationError if password and repeated_password differ."""
     if password != repeated_password:
@@ -19,7 +18,6 @@ def validate_passwords_match(password: str, repeated_password: str) -> None:
             {"repeated_password": "Passwörter stimmen nicht überein."}
         )
     
-
 def validate_login(email: str, password: str):
     """Authenticate user and return it, or raise ValidationError."""
     user = authenticate(email=email, password=password)

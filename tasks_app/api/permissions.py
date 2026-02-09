@@ -11,6 +11,7 @@ class IsTaskBoardMember(BasePermission):
             or obj.board.members.filter(id=user_id).exists()
         )
     
+    
 class IsTaskBoardMemberForComment(BasePermission):
     """
     Allow access to comments if the user is board member or board owner

@@ -7,7 +7,6 @@ def validate_not_empty(value: str, field_name: str = "value") -> str:
         raise serializers.ValidationError(f"{field_name} darf nicht leer sein.")
     return str(value).strip()
 
-
 def validate_user_is_board_member(board, user, field_name: str):
     """Raise ValidationError if the user is not a member of the board."""
     if user is None:
