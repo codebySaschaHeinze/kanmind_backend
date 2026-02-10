@@ -120,6 +120,22 @@ class TaskWriteSerializer(serializers.ModelSerializer):
         validate_user_is_board_member(board, reviewer, "reviewer_id")
 
         return attrs
+    
+    
+class TaskPatchResponseSerializer(TaskReadSerializer):
+    """Response serializer for PATCH/PUT /api/tasks/<id>/."""
+
+    class Meta(TaskReadSerializer.Meta):
+        fields = [
+            "id",
+            "title",
+            "description",
+            "status",
+            "priority",
+            "assignee",
+            "reviewer",
+            "due_date",
+        ]
 
 
 class CommentReadSerializer(serializers.ModelSerializer):

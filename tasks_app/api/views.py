@@ -18,6 +18,7 @@ from .permissions import IsTaskBoardMember, IsTaskBoardMemberForComment, IsTaskO
 from .serializers import (
     CommentReadSerializer,
     CommentWriteSerializer,
+    TaskPatchResponseSerializer,
     TaskReadSerializer,
     TaskWriteSerializer,
 )
@@ -26,16 +27,23 @@ from .serializers import (
 class TaskViewSet(viewsets.ModelViewSet):
     """CRUD operations for tasks limited to authorized board members."""
 
-    permission_classes = [IsAuthenticated, IsTaskBoardMember]
 
     def get_queryset(self):
         user = self.request.user
-        return (
-            Task.objects.filter(Q(board__members=user) | Q(board__created_by=user))
+
+        base = (
+            Task.objects
             .select_related("assigned_to", "reviewer", "board")
             .annotate(comments_count=Count("task_comments"))
-            .distinct()
         )
+
+        if self.action == "list":
+            return (
+                base.filter(Q(board__members=user) | Q(board__created_by=user))
+                .distinct()
+            )
+
+        return base
 
     def get_serializer_class(self):
         if self.action in ("create", "update", "partial_update"):
@@ -86,7 +94,25 @@ class TaskViewSet(viewsets.ModelViewSet):
 
         headers = self.get_success_headers(read_data)
         return Response(read_data, status=status.HTTP_201_CREATED, headers=headers)
+    
+    def partial_update(self, request, *args, **kwargs):
+        """Partially update a task and return a contract-compliant response."""
+        response = super().partial_update(request, *args, **kwargs)
 
+        task = self.get_queryset().get(pk=self.get_object().pk)
+        data = TaskPatchResponseSerializer(task, context=self.get_serializer_context()).data
+
+        return Response(data, status=response.status_code, headers=response.headers)
+
+
+    def update(self, request, *args, **kwargs):
+        """Update a task and return a contract-compliant response."""
+        response = super().update(request, *args, **kwargs)
+
+        task = self.get_queryset().get(pk=self.get_object().pk)
+        data = TaskPatchResponseSerializer(task, context=self.get_serializer_context()).data
+
+        return Response(data, status=response.status_code, headers=response.headers)
 
     @action(detail=False, methods=["get"], url_path="assigned-to-me")
     def assigned_to_me(self, request):
