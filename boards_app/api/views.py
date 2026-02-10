@@ -39,14 +39,15 @@ class BoardViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsBoardMemberOrCreator]
 
     def get_queryset(self):
-        """Return boards where the requesting user is a member or creator."""
         user = self.request.user
-        return (
-            Board.objects.filter(Q(members=user) | Q(created_by=user))
-            .select_related("created_by")
-            .prefetch_related("members")
-            .distinct()
-        )
+        """Return querysets depending on action."""
+
+        if self.action == "list":
+            return Board.objects.filter(
+                Q(members=user) | Q(created_by=user)
+            ).distinct()
+            
+        return Board.objects.all()
 
     def get_serializer_class(self):
         """Select the serializer based on the current action."""
