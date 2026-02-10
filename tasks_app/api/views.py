@@ -14,7 +14,7 @@ from rest_framework.response import Response
 
 from boards_app.models import Board
 from tasks_app.models import Comment, Task
-from .permissions import IsTaskBoardMember, IsTaskBoardMemberForComment
+from .permissions import IsTaskBoardMember, IsTaskBoardMemberForComment, IsTaskOwnerOrBoardCreator
 from .serializers import (
     CommentReadSerializer,
     CommentWriteSerializer,
@@ -41,6 +41,11 @@ class TaskViewSet(viewsets.ModelViewSet):
         if self.action in ("create", "update", "partial_update"):
             return TaskWriteSerializer
         return TaskReadSerializer
+    
+    def get_permissions(self):
+        if self.action == "destroy":
+            return [IsAuthenticated(), IsTaskOwnerOrBoardCreator()]
+        return [IsAuthenticated(), IsTaskBoardMember()]
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
@@ -49,29 +54,39 @@ class TaskViewSet(viewsets.ModelViewSet):
         board_id = request.data.get("board")
 
         if not board_id:
-            return Response(
-                {"detail": "Ein Board ist erforderlich."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response({"detail": "Ein Board ist erforderlich."},
+                        status=status.HTTP_400_BAD_REQUEST)
 
         try:
             board = Board.objects.get(id=board_id)
         except Board.DoesNotExist:
-            return Response(
-                {"detail": "Board wurde nicht gefunden."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+            return Response({"detail": "Board wurde nicht gefunden."},
+                        status=status.HTTP_404_NOT_FOUND)
 
         is_member = board.members.filter(id=request.user.id).exists()
         is_owner = (board.created_by_id == request.user.id)
 
         if not (is_member or is_owner):
-            return Response(
-            {"detail": "Du bist weder Board-Member noch Owner."},
-            status=status.HTTP_403_FORBIDDEN,
-        )
+            return Response({"detail": "Du bist weder Board-Member noch Owner."},
+                        status=status.HTTP_403_FORBIDDEN)
 
-        return super().create(request, *args, **kwargs)
+        write_serializer = TaskWriteSerializer(
+            data=request.data,
+            context=self.get_serializer_context()
+        )
+        write_serializer.is_valid(raise_exception=True)
+        task = write_serializer.save(created_by=request.user)
+
+        task = self.get_queryset().get(pk=task.pk)
+
+        read_data = TaskReadSerializer(
+            task,
+            context=self.get_serializer_context()
+        ).data
+
+        headers = self.get_success_headers(read_data)
+        return Response(read_data, status=status.HTTP_201_CREATED, headers=headers)
+
 
     @action(detail=False, methods=["get"], url_path="assigned-to-me")
     def assigned_to_me(self, request):
