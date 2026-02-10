@@ -48,10 +48,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-    'auth_app',
-    'users_app',
-    'boards_app',
-    'tasks_app'
+    "auth_app.apps.AuthAppConfig",
+    "users_app.apps.UsersAppConfig",
+    "boards_app.apps.BoardsAppConfig",
+    "tasks_app.apps.TasksAppConfig",
     
 ]
 

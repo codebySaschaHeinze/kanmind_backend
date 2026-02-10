@@ -23,6 +23,8 @@ class Board(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+        verbose_name = "Board"
+        verbose_name_plural = "Boards"
 
     def __str__(self):
         return self.title
